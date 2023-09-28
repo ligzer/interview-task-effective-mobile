@@ -1,0 +1,21 @@
+---
+# Install docker service on remote server, using external role
+- hosts: remote_servers
+  become: yes
+  vars:
+    docker_users:
+      - "{{ remote_user }}"
+  roles:
+    - geerlingguy.docker
+
+# Deploy lovely app
+- hosts: remote_servers
+  vars:
+    project_name: lovelyproject
+    app_name: lovelyapp
+    # Should use vault for secret variables
+    mysql_root_secret: "{{ lookup('ansible.builtin.env', 'MYSQL_ROOT_SECRET') }}"
+    mysql_secret: "{{ lookup('ansible.builtin.env', 'MYSQL_SECRET') }}"
+  roles:
+    - deploy-app
+...

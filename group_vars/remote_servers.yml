@@ -1,0 +1,4 @@
+---
+ansible_user: user
+remote_user: user
+...

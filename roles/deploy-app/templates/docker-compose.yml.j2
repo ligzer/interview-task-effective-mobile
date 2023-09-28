@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:{{ nginx_version }}
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+
+  app:
+    build: ./{{ app_name }}/
+    restart: always
+    environment:
+      DB_HOST: mysql
+      MYSQL_DATABASE: {{ app_name }}
+      MYSQL_USER: {{ app_name }}
+      MYSQL_PASSWORD: {{ mysql_secret }}
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:{{ mysql_version }}
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: {{ mysql_root_secret }}
+      MYSQL_DATABASE: {{ app_name }}
+      MYSQL_USER: {{ app_name }}
+      MYSQL_PASSWORD: {{ mysql_secret }}
+    volumes:
+      - ./data:/var/lib/mysql
